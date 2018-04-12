@@ -1,0 +1,45 @@
+---
+title: "Group D Project Proposal 1"
+author: "Ester Zhao, Jillian Hu, and Aoi Ogawa"
+date: "3/8/18"
+output: oilabs::lab_report
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(oilabs)
+```
+
+* * *
+
+#Title
+\#OscarsSoWhite
+
+#Purpose
+We want to analyze the influence of gender and ethnicity on how many words are spoken in Oscar nominated movies, and in addition, to analyze how the American film industry has grown in diversity, if it has at all. The lack of representation of nondominant genders and ethnicities in entertainment, specifically movies in the American film industry, is well known - there have been multiple trending hashtags debating just this. We hope to ask the following questions to get some solid data on this issue: What percentage of movie scripts are POC speaking? What percentage of movie scripts have women speaking?
+
+
+# Data
+
+For our data, we are using a github repository created by Buzzfeed (https://github.com/BuzzFeedNews/2018-03-oscars-script-diversity-analysis). 
+
+Primarily, we will be using these datasets:
+1. https://raw.githubusercontent.com/BuzzFeedNews/2018-03-oscars-script-diversity-analysis/master/data/actor-metrics.csv
+
+2. https://raw.githubusercontent.com/BuzzFeedNews/2018-03-oscars-script-diversity-analysis/master/data/character-word-counts.csv 
+
+This data will need to be manipulated for our analysis, but will hopefully prove useful.
+
+# Population
+
+Each observational unit is a single actor in 22 films nominated for Best Picture for 1990, 2016, 2018 Academy Awards. We will try to generalize to Hollywood over the years. The total population in this case are all actors of Oscar nominated films.
+
+# Response Variable
+
+The response variable is the word count of an individual actor in a specific movie. This may range from 0 to as many words as there are in the film (hypothetically). 
+
+# Explanatory Variables
+
+The explanatory variables are year, movie, ethnicity of the actor, and gender. We will also seperate actors based on if their role was a lead role or a supporting role. For this, we will choose arbitrary amount of words spoken based some deeper research (current plan: higher than 1000 words) to seperate lead characters from supporting characters.
