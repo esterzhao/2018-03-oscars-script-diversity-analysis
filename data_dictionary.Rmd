@@ -1,0 +1,86 @@
+---
+title: "data_dictionary"
+author: "Aoi, Jillian, Ester"
+date: "4/15/2018"
+output: html_document
+---
+
+
+```{r}
+
+#can't import need to solve, rename it to "group-D-data.csv"
+actor-metrics <- read_csv("/Users/aoiogawa/SDS_201_final_project/data/actor-metrics.csv")
+View(actor_metrics)
+
+# main characters
+main_character <- actor_metrics %>%
+  filter(words >= 1000)
+
+favstats(main_character$words)
+
+# sub characters
+sub_character <- actor_metrics %>%
+  filter(words < 1000)
+
+favstats(sub_character$words)
+
+#actress
+actress <- actor_metrics %>%
+  filter(gender == "female")
+
+favstats(actress$words)
+
+# main female actor 
+main_actress <- actress %>%
+  filter(words >= 1000)
+
+favstats(poc_actor$words)
+
+# actors who are poc
+poc_actor <- actor_metrics %>%
+  filter (race_simple == "POC") 
+
+favstats(poc_actor$words)
+
+#main character actors who are poc 
+main_poc_actor <- main_character %>%
+  filter (race_simple == "POC") 
+
+favstats(main_poc_actor$words)
+
+#sub character actors who are poc 
+sub_poc_actor <- sub_character %>%
+  filter(race_simple == "POC")
+
+favstats(sub_poc_actor$words)
+
+# main white actor 
+main_white_actor <- actor_metrics %>% 
+  filter(race_simple == "White") %>%
+  filter(words >= 1000)
+
+# sub white actor 
+sub_white_actor <- actor_metrics %>%  
+  filter(race_simple == "White") %>%
+  filter(words < 1000)
+
+actor_metrics %>% 
+  filter(race == "Asian")
+
+tally(race_simple ~ gender, actor_metrics)  
+tally(race ~ gender, actor_metrics)
+
+# number of characters per movie
+n_characters <- actor_metrics %>% 
+  group_by(year, film) %>%
+  summarise(n_characters = sum(n_distinct(characters)))
+
+# words per movie
+words_per_movie <- actor_metrics %>%
+  group_by(year, film) %>% 
+  summarise(sum_words = sum(words))
+
+```
+
+
+We decided that in order to distinguish main characters from supporting characters, that we would measure an actor's importance based on their world count. We arbitrarily decided that we would use 1000 words as the amount that set an actor apart as a main character. However, not all main characters speak many words, or even at all. For example, the main character in the 2017 film "Shape of Water" is a mute woman, who does not speak any words. Since Sally Hawkins, the actress that plays the mute woman, is not even mentioned in this data set, we can assume that the compilers of this data decided that characters with no spoken words were not of note. Because of this, our data set excludes characters from films where the main characters do not speak any words, and discriminates against those who do not speak many words.
