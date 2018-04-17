@@ -8,6 +8,12 @@ output: html_document
 
 ```{r}
 
+# Calls from the url, doesn't need a computer pathway
+oscars <- read.csv("https://raw.githubusercontent.com/BuzzFeedNews/2018-03-oscars-script-diversity-analysis/master/data/actor-metrics.csv")
+
+words <- read.csv("https://raw.githubusercontent.com/BuzzFeedNews/2018-03-oscars-script-diversity-analysis/master/data/character-word-counts.csv")
+
+
 #can't import need to solve, rename it to "group-D-data.csv"
 actor-metrics <- read_csv("/Users/aoiogawa/SDS_201_final_project/data/actor-metrics.csv")
 View(actor_metrics)
