@@ -5,6 +5,13 @@ date: "4/15/2018"
 output: html_document
 ---
 
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(mosaic)
+```
+
 
 ```{r}
 
@@ -14,24 +21,24 @@ oscars <- read.csv("https://raw.githubusercontent.com/BuzzFeedNews/2018-03-oscar
 words <- read.csv("https://raw.githubusercontent.com/BuzzFeedNews/2018-03-oscars-script-diversity-analysis/master/data/character-word-counts.csv")
 
 
-#can't import need to solve, rename it to "group-D-data.csv"
-actor-metrics <- read_csv("/Users/aoiogawa/SDS_201_final_project/data/actor-metrics.csv")
-View(actor_metrics)
+# #can't import need to solve, rename it to "group-D-data.csv"
+# actor-metrics <- read_csv("/Users/aoiogawa/SDS_201_final_project/data/actor-metrics.csv")
+# View(actor_metrics)
 
 # main characters
-main_character <- actor_metrics %>%
+main_character <- oscars %>%
   filter(words >= 1000)
 
 favstats(main_character$words)
 
 # sub characters
-sub_character <- actor_metrics %>%
+sub_character <- oscars %>%
   filter(words < 1000)
 
 favstats(sub_character$words)
 
 #actress
-actress <- actor_metrics %>%
+actress <- oscars %>%
   filter(gender == "female")
 
 favstats(actress$words)
@@ -40,10 +47,10 @@ favstats(actress$words)
 main_actress <- actress %>%
   filter(words >= 1000)
 
-favstats(poc_actor$words)
+favstats(main_actress$words)
 
 # actors who are poc
-poc_actor <- actor_metrics %>%
+poc_actor <- oscars %>%
   filter (race_simple == "POC") 
 
 favstats(poc_actor$words)
@@ -61,28 +68,28 @@ sub_poc_actor <- sub_character %>%
 favstats(sub_poc_actor$words)
 
 # main white actor 
-main_white_actor <- actor_metrics %>% 
+main_white_actor <- oscars %>% 
   filter(race_simple == "White") %>%
   filter(words >= 1000)
 
 # sub white actor 
-sub_white_actor <- actor_metrics %>%  
+sub_white_actor <- oscars %>%  
   filter(race_simple == "White") %>%
   filter(words < 1000)
 
-actor_metrics %>% 
+oscars %>% 
   filter(race == "Asian")
 
-tally(race_simple ~ gender, actor_metrics)  
-tally(race ~ gender, actor_metrics)
+tally(race_simple ~ gender, oscars)  
+tally(race ~ gender, oscars)
 
 # number of characters per movie
-n_characters <- actor_metrics %>% 
+n_characters <- oscars %>% 
   group_by(year, film) %>%
   summarise(n_characters = sum(n_distinct(characters)))
 
 # words per movie
-words_per_movie <- actor_metrics %>%
+words_per_movie <- oscars %>%
   group_by(year, film) %>% 
   summarise(sum_words = sum(words))
 
