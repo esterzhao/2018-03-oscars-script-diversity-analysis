@@ -5,26 +5,160 @@ date: "4/23/2018"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(mosaic)
+library(forcats)
+library(plyr)
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+oscars <- read.csv("https://raw.githubusercontent.com/BuzzFeedNews/2018-03-oscars-script-diversity-analysis/master/data/actor-metrics.csv")
 ```
 
-## Including Plots
+```{r}
+# main characters
+main_character <- oscars %>%
+  filter(words >= 1000)
 
-You can also embed plots, for example:
+# sub characters
+sub_character <- oscars %>%
+  filter(words < 1000)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+# female actors
+actress <- oscars %>%
+  filter(gender == "female")
+
+# main female actor 
+main_actress <- actress %>%
+  filter(words >= 1000)
+
+# actors who are poc
+poc_actor <- oscars %>%
+  filter (race_simple == "POC")
+
+#main character actors who are poc 
+main_poc_actor <- main_character %>%
+  filter (race_simple == "POC") 
+
+#sub character actors who are poc 
+sub_poc_actor <- sub_character %>%
+  filter(race_simple == "POC")
+
+# main white actor 
+main_white_actor <- oscars %>% 
+  filter(race_simple == "White") %>%
+  filter(words >= 1000)
+
+# sub white actor 
+sub_white_actor <- oscars %>%  
+  filter(race_simple == "White") %>%
+  filter(words < 1000)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+#top 10 white males who have the most word count
+top_white <- main_white_actor %>%
+  arrange(desc(words)) %>%
+  head(5)
+id <- rownames(top_white)
+top_white <- cbind(id = id, top_white)
+
+
+#top 10 POC actor/actress who have the most word count
+top_poc <- poc_actor %>%
+  arrange(desc(words)) %>%
+  head(5)
+id <- rownames(top_poc)
+top_poc <- cbind(id = id, top_poc)
+
+top_race <- full_join(top_white, top_poc)
+
+
+#white, poc 
+ggplot(top_race) + 
+  geom_bar (aes(x=id, y = words, fill = race_simple), stat = "identity", position = "dodge") +
+  labs(x = "Top 5 Actors (highest word counts)", y = "Total Word Count", title = "POC vs White Actor Word Counts", fill = "Actor Race")
+```
+
+```{r}
+#top 10 female who have the most word count
+top_actress <- main_actress %>%
+  arrange(desc(words)) %>%
+  head(5)
+
+id <- rownames(top_actress)
+top_actress <- cbind(id = id, top_actress)
+
+#top 10 male who have the most word count
+top_actor <- oscars %>%
+  filter(gender == "male") %>%
+  arrange(desc(words)) %>%
+  head(5)
+
+id <- rownames(top_actor)
+top_actor <- cbind(id = id, top_actor)
+
+top_gender <- full_join(top_actor, top_actress)
+
+
+#female, male 
+ggplot(top_gender) + 
+  geom_bar (aes(x = id, y = words, fill = gender), stat = "identity", position = "dodge") +
+  labs(x = "Top 5 Actors (highest word counts)", y = "Total Word Count", title = "Female vs Male Actor Word Counts", fill = "Gender")
+
+```
+
+
+```{r}
+#time vs word count in race 
+
+race_words <- oscars %>%
+  group_by(year, race_simple) %>%
+  summarise(words_sum = sum(words)) 
+
+total_words <- oscars %>%
+  group_by(year) %>%
+  summarise(total = sum(words))
+
+fin_race_words <- inner_join(race_words,total_words)
+
+fin_race_words <- fin_race_words %>%
+  mutate(prop = words_sum/total*100)
+#%>%
+  #ddply(fin_race_words, .(year),transform, pos = cumsum(percentage) - (0.5 * percentage))
+
+
+ggplot(fin_race_words, aes(x = as.factor(year), y = prop, fill = race_simple)) + 
+  geom_bar(stat = "identity")
+
+#+
+  #geom_text(aes(x = year, y = pos, label = paste0(percentage,"%")), size = 4) 
+  
+  
+```
+
+```{r}
+#time vs word count in race 
+
+gender_words <- oscars %>%
+  group_by(year, gender) %>%
+  summarise(words_sum = sum(words)) 
+
+g_total_words <- oscars %>%
+  group_by(year) %>%
+  summarise(total = sum(words))
+
+fin_g_words <- inner_join(gender_words,g_total_words)
+
+fin_g_words <- fin_g_words %>%
+  mutate(prop = words_sum/total*100)
+
+ggplot(fin_g_words, aes(x = as.factor(year), y = prop, fill = gender)) + 
+  geom_bar(stat = "identity")
+```
+
