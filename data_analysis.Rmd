@@ -205,7 +205,7 @@ all <- all %>%
 
 ggplot(all, aes(x = all, y = prop, fill = type)) +
   geom_bar(stat = "identity") +
-  ggplot2::labs(x = "All Actors (1989, 2015, 2017)", y = "The Proportion of Main Characters", title = "The Proportion of White vs POC Actors", fill = "Gender and Race") + 
+  ggplot2::labs(x = "All Actors (1989, 2015, 2017)", y = "The Proportion of Main Characters", title = "Proportion of Main Characters Based on Race and Gender", fill = "Gender and Race") + 
   scale_fill_discrete(breaks = c("poc_f", "poc_m", "white_f", "white_m"), labels = c("POC Female", "POC Male", "White Female", "White Male"))
 
 
