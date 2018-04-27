@@ -11,8 +11,8 @@ library(tidyverse)
 library(dplyr)
 library(ggplot2)
 library(mosaic)
-library(forcats)
-library(plyr)
+# library(forcats)
+# library(plyr)
 ```
 
 
@@ -118,12 +118,12 @@ ggplot(top_gender) +
 #time vs word count in race 
 
 race_words <- oscars %>%
-  group_by(year, race_simple) %>%
-  summarise(words_sum = sum(words)) 
+  dplyr::group_by(year, race_simple) %>%
+  dplyr::summarise(words_sum = sum(words))
 
 total_words <- oscars %>%
-  group_by(year) %>%
-  summarise(total = sum(words))
+  dplyr::group_by(year) %>%
+  dplyr::summarise(total = sum(words))
 
 fin_race_words <- inner_join(race_words,total_words)
 
@@ -142,16 +142,17 @@ ggplot(fin_race_words, aes(x = as.factor(year), y = prop, fill = race_simple)) +
   
 ```
 
+
 ```{r}
-#time vs word count in race 
+#time vs word count in gender 
 
 gender_words <- oscars %>%
-  group_by(year, gender) %>%
-  summarise(words_sum = sum(words)) 
+  dplyr::group_by(year, gender) %>%
+  dplyr::summarise(words_sum = sum(words)) 
 
 g_total_words <- oscars %>%
-  group_by(year) %>%
-  summarise(total = sum(words))
+  dplyr::group_by(year) %>%
+  dplyr::summarise(total = sum(words))
 
 fin_g_words <- inner_join(gender_words,g_total_words)
 
@@ -160,5 +161,53 @@ fin_g_words <- fin_g_words %>%
 
 ggplot(fin_g_words, aes(x = as.factor(year), y = prop, fill = gender)) + 
   geom_bar(stat = "identity")
+```
+
+```{r}
+#actors, race, gender
+
+#white male
+white_males <- main_white_actor %>%
+  dplyr::summarise(white_m = n())
+
+#white female
+white_female <- main_actress %>%
+  filter(race_simple == "White") %>%
+  dplyr::summarise(white_f = n())
+
+#POC male 
+poc_male <- poc_actor %>%
+  filter(gender == "male") %>%
+  dplyr::summarise(poc_m = n())
+
+
+all <- white_males
+
+all <- rbind(all, "white_f" = 13) %>%
+  rbind ("poc_m" = 17) %>%
+  rbind("poc_f" = 13)
+
+names(all)[1]<-"number"
+
+all <- all %>%
+  mutate(prop = number/ sum(number)*100)
+
+rownames(all) <-c("white_m", "white_f", "poc_m", "poc_f" )
+
+all <- cbind(rownames(all), all)
+rownames(all) <- NULL
+colnames(all) <- c("type","number","prop")
+
+ggplot(all, aes(x = number, y = prop, fill = type)) +
+  geom_bar(position = "stack", stat = "identiy")
+
+```
+
+```{r}
+mod <- lm(words ~ as.factor(year) + gender + race_simple, data = oscars)
+
+summary(mod)
+
+plot(mod, which = c(1,2))
 ```
 
